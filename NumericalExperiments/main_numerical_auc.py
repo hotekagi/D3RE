@@ -4,7 +4,7 @@ import torch.optim as optim
 
 from dataset import load_dataset
 from model import CNN
-from train import test, train
+from train import train
 
 
 def main():
@@ -25,10 +25,12 @@ def main():
     test_loss_pu = np.zeros((ite, epoch))
     test_auc_pu = np.zeros((ite, epoch))
     mean_dr_pu = np.zeros((ite, epoch))
+
     train_loss_ulsif = np.zeros((ite, epoch))
     test_loss_ulsif = np.zeros((ite, epoch))
     test_auc_ulsif = np.zeros((ite, epoch))
     mean_dr_ulsif = np.zeros((ite, epoch))
+
     train_loss_kliep = np.zeros((ite, epoch))
     test_loss_kliep = np.zeros((ite, epoch))
     test_auc_kliep = np.zeros((ite, epoch))
@@ -38,6 +40,7 @@ def main():
     test_loss_nnpu = np.zeros((ite, epoch))
     test_auc_nnpu = np.zeros((ite, epoch))
     mean_dr_nnpu = np.zeros((ite, epoch))
+
     train_loss_nnulsif = np.zeros((ite, epoch))
     test_loss_nnulsif = np.zeros((ite, epoch))
     test_auc_nnulsif = np.zeros((ite, epoch))
@@ -95,20 +98,20 @@ def main():
         train_pu, test_pu, auc_pu, mean_pu = train(x_data, t_data, x_test, t_test, epoch, model_pu, optimizer_pu, device, batchsize=batchsize, method="PU")
         train_ulisf, test_ulsif, auc_ulsif, mean_ulsif = train(x_data, t_data, x_test, t_test, epoch, model_ulsif, optimizer_ulsif, device, batchsize=batchsize, method="uLSIF")
         train_kliep, test_kliep, auc_kliep, mean_kliep = train(x_data, t_data, x_test, t_test, epoch, model_kliep, optimizer_kliep, device, batchsize=batchsize, method="KLIEP")
-
         train_nnpu, test_nnpu, auc_nnpu, mean_nnpu = train(x_data, t_data, x_test, t_test, epoch, model_nnpu, optimizer_nnpu, device, batchsize=batchsize, method="nnPU")
         train_nnulisf, test_nnulsif, auc_nnulsif, mean_nnulsif = train(x_data, t_data, x_test, t_test, epoch, model_nnulsif, optimizer_nnulsif, device, batchsize=batchsize, method="nnuLSIF")
-
         train_boundedulisf, test_boundedulsif, auc_boundedulsif, mean_boundedulsif = train(x_data, t_data, x_test, t_test, epoch, model_boundedulsif, optimizer_boundedulsif, device, batchsize=batchsize, method="boundeduLSIF")
 
         train_loss_pu[i] = train_pu
         test_loss_pu[i] = test_pu
         test_auc_pu[i] = auc_pu
         mean_dr_pu[i] = mean_pu
+
         train_loss_ulsif[i] = train_ulisf
         test_loss_ulsif[i] = test_ulsif
         test_auc_ulsif[i] = auc_ulsif
         mean_dr_ulsif[i] = mean_ulsif
+
         train_loss_kliep[i] = train_kliep
         test_loss_kliep[i] = test_kliep
         test_auc_kliep[i] = auc_kliep
@@ -118,6 +121,7 @@ def main():
         test_loss_nnpu[i] = test_nnpu
         test_auc_nnpu[i] = auc_nnpu
         mean_dr_nnpu[i] = mean_nnpu
+
         train_loss_nnulsif[i] = train_nnulisf
         test_loss_nnulsif[i] = test_nnulsif
         test_auc_nnulsif[i] = auc_nnulsif
@@ -131,10 +135,8 @@ def main():
         print(test_pu[-1])
         print(test_ulsif[-1])
         print(test_kliep[-1])
-
         print(test_nnpu[-1])
         print(test_nnulsif[-1])
-
         print(test_boundedulsif[-1])
 
         seed += 1
@@ -143,10 +145,12 @@ def main():
         np.savetxt("results/test_loss_pu_%s_%f.csv" % (dataset, learning_rate), test_loss_pu, delimiter=",")
         np.savetxt("results/test_auc_pu_%s_%f.csv" % (dataset, learning_rate), test_auc_pu, delimiter=",")
         np.savetxt("results/mean_dr_pu_%s_%f.csv" % (dataset, learning_rate), mean_dr_pu, delimiter=",")
+
         np.savetxt("results/train_loss_ulsif_%s_%f.csv" % (dataset, learning_rate), train_loss_ulsif, delimiter=",")
         np.savetxt("results/test_loss_ulsif_%s_%f.csv" % (dataset, learning_rate), test_loss_ulsif, delimiter=",")
         np.savetxt("results/test_auc_ulisf_%s_%f.csv" % (dataset, learning_rate), test_auc_ulsif, delimiter=",")
         np.savetxt("results/mean_dr_ulsif_%s_%f.csv" % (dataset, learning_rate), mean_dr_ulsif, delimiter=",")
+
         np.savetxt("results/train_loss_kliep_%s_%f.csv" % (dataset, learning_rate), train_loss_kliep, delimiter=",")
         np.savetxt("results/test_loss_kliep_%s_%f.csv" % (dataset, learning_rate), test_loss_kliep, delimiter=",")
         np.savetxt("results/test_auc_kliep_%s_%f.csv" % (dataset, learning_rate), test_auc_kliep, delimiter=",")
@@ -156,6 +160,7 @@ def main():
         np.savetxt("results/test_loss_nnpu_%s_%f.csv" % (dataset, learning_rate), test_loss_nnpu, delimiter=",")
         np.savetxt("results/test_auc_nnpu_%s_%f.csv" % (dataset, learning_rate), test_auc_nnpu, delimiter=",")
         np.savetxt("results/mean_dr_nnpu_%s_%f.csv" % (dataset, learning_rate), mean_dr_nnpu, delimiter=",")
+
         np.savetxt("results/train_loss_nnulsif_%s_%f.csv" % (dataset, learning_rate), train_loss_nnulsif, delimiter=",")
         np.savetxt("results/test_loss_nnulsif_%s_%f.csv" % (dataset, learning_rate), test_loss_nnulsif, delimiter=",")
         np.savetxt("results/test_auc_nnulsif_%s_%f.csv" % (dataset, learning_rate), test_auc_nnulsif, delimiter=",")

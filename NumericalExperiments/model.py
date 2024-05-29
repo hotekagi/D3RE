@@ -1,23 +1,19 @@
-import numpy as np
-
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms
 
 
 class NN(nn.Module):
     def __init__(self, dim):
         super(NN, self).__init__()
-        self.fc1=nn.Linear(dim, 100)
-        self.fc2=nn.Linear(100, 1)
+        self.fc1 = nn.Linear(dim, 100)
+        self.fc2 = nn.Linear(100, 1)
 
     def __call__(self, x):
         h = self.fc1(x)
         h = F.relu(h)
         h = self.fc2(h)
         return h
+
 
 class CNN(nn.Module):
     def __init__(self, dim):

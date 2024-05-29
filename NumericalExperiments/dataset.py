@@ -1,17 +1,19 @@
-import numpy as np
-import urllib.request
 import os
-import tarfile
 import pickle
+import tarfile
+import urllib.request
+
+import numpy as np
 from sklearn.datasets import fetch_openml
 
+
 def get_mnist():
-    mnist = fetch_openml('mnist_784', data_home=".")
+    mnist = fetch_openml("mnist_784", data_home=".")
 
     x = mnist.data
     y = mnist.target
     # reshape to (#data, #channel, width, height)
-    x = np.reshape(x, (x.shape[0], 1, 28, 28)) / 255.
+    x = np.reshape(x, (x.shape[0], 1, 28, 28)) / 255.0
     x_tr = np.asarray(x[:60000], dtype=np.float32)
     y_tr = np.asarray(y[:60000], dtype=np.int32)
     x_te = np.asarray(x[60000:], dtype=np.float32)
@@ -28,8 +30,8 @@ def binarize_mnist_class(y_train, y_test):
 
 
 def unpickle(file):
-    fo = open(file, 'rb')
-    dictionary = pickle.load(fo, encoding='latin1')
+    fo = open(file, "rb")
+    dictionary = pickle.load(fo, encoding="latin1")
     fo.close()
     return dictionary
 
@@ -59,24 +61,24 @@ def get_cifar10(path="./mldata"):
         fname = os.path.join(folder, "%s%d" % ("data_batch_", i))
         data_dict = unpickle(fname)
         if i == 1:
-            x_tr = data_dict['data']
-            y_tr = data_dict['labels']
+            x_tr = data_dict["data"]
+            y_tr = data_dict["labels"]
         else:
-            x_tr = np.vstack((x_tr, data_dict['data']))
-            y_tr = np.hstack((y_tr, data_dict['labels']))
+            x_tr = np.vstack((x_tr, data_dict["data"]))
+            y_tr = np.hstack((y_tr, data_dict["labels"]))
 
-    data_dict = unpickle(os.path.join(folder, 'test_batch'))
-    x_te = data_dict['data']
-    y_te = np.array(data_dict['labels'])
+    data_dict = unpickle(os.path.join(folder, "test_batch"))
+    x_te = data_dict["data"]
+    y_te = np.array(data_dict["labels"])
 
-    bm = unpickle(os.path.join(folder, 'batches.meta'))
+    bm = unpickle(os.path.join(folder, "batches.meta"))
     # label_names = bm['label_names']
     # rehape to (#data, #channel, width, height)
     x_tr = np.reshape(x_tr, (np.shape(x_tr)[0], 3, 32, 32)).astype(np.float32)
     x_te = np.reshape(x_te, (np.shape(x_te)[0], 3, 32, 32)).astype(np.float32)
     # normalize
-    x_tr /= 255.
-    x_te /= 255.
+    x_tr /= 255.0
+    x_te /= 255.0
     return (x_tr, y_tr), (x_te, y_te)  # , label_names
 
 
@@ -93,7 +95,7 @@ def make_dataset(dataset, n_labeled, n_unlabeled):
         labels = np.unique(y)
         positive, negative = labels[1], labels[0]
         x, y = np.asarray(x, dtype=np.float32), np.asarray(y, dtype=np.int32)
-        assert(len(x) == len(y))
+        assert len(x) == len(y)
         perm = np.random.permutation(len(y))
         x, y = x[perm], y[perm]
         n_p = (y == positive).sum()
@@ -149,8 +151,8 @@ def load_dataset(dataset_name):
     else:
         raise ValueError("dataset name {} is unknown.".format(dataset_name))
 
-    #trainX = np.transpose(trainX, (0, 2, 3, 1))
-    #testX = np.transpose(testX, (0, 2, 3, 1))
-    #print(trainX.shape)
-    #print(testX.shape)
+    # trainX = np.transpose(trainX, (0, 2, 3, 1))
+    # testX = np.transpose(testX, (0, 2, 3, 1))
+    # print(trainX.shape)
+    # print(testX.shape)
     return trainX, trainY, testX, testY
