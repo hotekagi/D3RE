@@ -1,5 +1,4 @@
 import numpy as np
-import six
 import torch
 import torch.nn.functional as F
 from sklearn import metrics
@@ -18,7 +17,7 @@ def train(x_train, t_train, x_test, t_test, epoch, model, optimizer, device, bat
 
         perm = np.random.permutation(N)
 
-        for i in six.moves.range(0, N, batchsize):
+        for i in range(0, N, batchsize):
             model.train()
             optimizer.zero_grad()
 
@@ -80,7 +79,7 @@ def train(x_train, t_train, x_test, t_test, epoch, model, optimizer, device, bat
 def test(xt, tt, model, device, batchsize=100, method="nnPU", upper_bound=1.5):
     f = np.array([])
 
-    for i in six.moves.range(0, len(xt), batchsize):
+    for i in range(0, len(xt), batchsize):
         xs = xt[i : i + batchsize]
         x = torch.tensor(xs, dtype=torch.float32)
         x = x.to(device)
@@ -147,10 +146,14 @@ def loss_func(output, t_nu, t_de, method="nnPU", upper_bound=1.5):
             loss = loss_positive + loss_negative
 
     if method == "PU":
+        _EPS = 1e-7
+        prob = torch.sigmoid(output)
+        prob = torch.clamp(prob, _EPS, 1 - _EPS)
+
         n_positive, n_unlabeled = max([1.0, torch.sum(t_nu)]), max([1.0, torch.sum(t_de)])
 
-        g_positive = torch.log(torch.sigmoid(output))
-        g_unlabeled = torch.log(1 - torch.sigmoid(output))
+        g_positive = torch.log(prob)
+        g_unlabeled = torch.log(1 - prob)
 
         loss_positive = -CLASS_PIOR * torch.sum(g_positive * t_nu) / n_positive
         loss_negative = -torch.sum(g_unlabeled * t_de) / n_unlabeled + CLASS_PIOR * torch.sum(g_unlabeled * t_nu) / n_positive
